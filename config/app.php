@@ -159,7 +159,7 @@ return [
         /*
          * Package Service Providers...
          */
-        \SocialiteProviders\Manager\ServiceProvider::class, // add
+        \SocialiteProviders\Manager\ServiceProvider::class,         
         /*
          * Application Service Providers...
          */

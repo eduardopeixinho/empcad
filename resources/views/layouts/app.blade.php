@@ -1,36 +1,83 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+<x-laravel-ui-adminlte::adminlte-layout>
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+    <body class="hold-transition sidebar-mini layout-fixed">
+        <div class="wrapper">
+            <!-- Main Header -->
+            <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+                <!-- Left navbar links -->
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i
+                                class="fas fa-bars"></i></a>
+                    </li>
+                </ul>
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item dropdown user-menu">
+                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                            <img src="{{ Auth::user()->avatar }}" class="user-image img-circle elevation-2"
+                                alt="User Image">
+                            <span class="d-none d-md-inline">{{ Auth::user()->name }}</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                            <!-- User image -->
+                            <li class="user-header bg-primary">
+                                <img src="{{ Auth::user()->avatar }}" class="img-circle elevation-2" alt="User Image">
+                                <p>
+                                    {{ Auth::user()->name }}
+                                    <small>Member since {{ Auth::user()->created_at->format('M. Y') }}</small>
+                                </p>
+                            </li>
+                            <!-- Menu Footer-->
+                            <li class="user-footer">
+                                <a href="#" class="btn btn-default btn-flat">Profile</a>
+                                <a href="#" class="btn btn-default btn-flat float-right"
+                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                    Sign out
+                                </a>
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                    @csrf
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-            @include('layouts.navigation')
+            <!-- Left side column. contains the logo and sidebar -->
+            @include('layouts.sidebar')
 
-            <!-- Page Heading -->
-            @if (isset($header))
-                <header class="bg-white dark:bg-gray-800 shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
-                    </div>
-                </header>
-            @endif
+            <!-- Content Wrapper. Contains page content -->
+            <div class="content-wrapper">
+                @yield('content')
 
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
+                <meta name="csrf-token" content="{{ csrf_token() }}" />
+                <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/css/bootstrap.min.css"
+                    rel="stylesheet">
+                <link href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+                <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.js"></script>
+                <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+                    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+                </script>
+                <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap5.min.js"></script>
+                <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+                <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+                <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+                <link rel="stylesheet" type="text/css"
+                    href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+                </head>
+            </div>
+
+            <!-- Main Footer -->
+            <footer class="main-footer">
+                <div class="d-none d-sm-block float-right">
+                    <b>Version</b> 3.1.0
+                </div>
+                <strong>Copyright &copy; 2014-2023 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights
+                reserved.
+            </footer>
         </div>
     </body>
-</html>
+</x-laravel-ui-adminlte::adminlte-layout>
