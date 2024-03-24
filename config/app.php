@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'EmpCad'),
 
     /*
     |--------------------------------------------------------------------------
@@ -159,7 +159,7 @@ return [
         /*
          * Package Service Providers...
          */
-
+        \SocialiteProviders\Manager\ServiceProvider::class, // add
         /*
          * Application Service Providers...
          */
