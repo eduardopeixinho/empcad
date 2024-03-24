@@ -13,8 +13,6 @@ class CompanyController extends Controller
      */
     public function index(Request $request)
     {
-        //$login = session('login_struct');
-        //$solicitation = Solicitation::get();
         $companies_temp = Company::Join('companies_types', 'companies.companies_types_id', 'companies_types.id')
         ->leftJoin('size_companies', 'companies.size_companies_id', 'size_companies.id')
         ->leftJoin('cnaes', 'companies.cnaes_id', 'cnaes.id')
@@ -25,24 +23,14 @@ class CompanyController extends Controller
             'companies.id',
             'companies.cnpj',
             'companies.name',
-            'companies_types.description AS company_type',
+            'cnaes.description AS cnaes_id',
             'legal_forms.description AS legal_forms',
             'companies.status',
-            'companies.created_at',
+            'companies.dt_estabilishment',
             'companies.updated_at',
         );
         
         $companies_temp = $companies_temp->get();
-
-      //  dd($companies_temp);
-/*
-        $companies_temp = $companies_temp->map(function (Company $solicit) {
-
-            $solicit->created_at = $this->dateView($solicit->created_at);
-            $solicit->dt_limit = $this->dateView($solicit->dt_limit);
-            return $solicit;
-        });
-*/
  
         if ($request->ajax()) {
             $allData = DataTables::of($companies_temp)
@@ -78,7 +66,18 @@ class CompanyController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'description' => 'required',
+            
+        ]);
+
+        $role = Company::Create(
+            [
+                'description' => $request->description,
+            ]
+        );
+             
+        return response()->json(['success'=>'Empresa incluída com sucesso.']);
     }
 
     /**
