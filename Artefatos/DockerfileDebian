@@ -1,0 +1,108 @@
+FROM debian
+
+#Apache ENVS
+ENV APACHE_RUN_USER www-data
+ENV APACHE_RUN_GROUP www-data
+ENV APACHE_LOCK_DIR /var/lock/apache2
+ENV APACHE_LOG_DIR /var/log/apache2
+ENV APACHE_PID_FILE /var/run/apache2/apache.APACHE_PID_FILE
+ENV APACHE_SERVER_NAME localhost
+
+#Atualização do Ubuntu
+RUN apt-get update -y && apt-get upgrade -y
+
+#Instalação das dependências iniciais
+RUN apt install -y \
+        lsb-release \
+        ca-certificates \
+        apt-transport-https \
+        software-properties-common
+
+#Configuração de Localização
+RUN apt-get update -y && \
+    apt-get install -y tzdata && \
+    echo "tzdata tzdata/Areas select America" | debconf-set-selections && \
+    echo "tzdata tzdata/Zones/America select Sao_Paulo" | debconf-set-selections && \
+    ln -fs /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime && \
+    dpkg-reconfigure -f noninteractive tzdata
+
+#Instalação do pacote básico do PHP e utilitários
+RUN  apt install -y \
+        php8.2 \
+        curl \
+        wget \
+        git \
+        nano\
+        libcurl4
+
+#Instalação do Apache 2, pacotes adicionais para o PHP e dependências
+RUN apt update -y && apt install -y \
+        libapache2-mod-php8.2 \
+        apache2 \
+        php-pear\
+        curl \
+        php8.2-mysql\
+        php8.2-curl \
+        php8.2-gd \
+        php8.2-zip \
+        php8.2-xml \
+        php8.2-dev\
+        php8.2-mbstring
+
+#Instalação NODe e NPM
+RUN apt update
+RUN apt install -y ca-certificates curl gnupg
+RUN mkdir -p /etc/apt/keyrings
+RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+RUN NODE_MAJOR=20
+RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
+RUN apt install -y nodejs
+RUN apt install gcc g++ make -y
+RUN curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor |  tee /usr/share/keyrings/yarnkey.gpg >/dev/null
+RUN echo "deb [signed-by=/usr/share/keyrings/yarnkey.gpg] https://dl.yarnpkg.com/debian stable main" | tee /etc/apt/sources.list.d/yarn.list
+
+RUN  a2enmod php8.2
+
+#Instalação do Composer
+RUN wget -O composer-setup.php https://getcomposer.org/installer
+
+RUN php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+
+#Configuração do servidor Apache 2 para utilizar https
+RUN mkdir /etc/apache2/ssl
+RUN a2enmod ssl
+
+RUN openssl req -x509 -newkey rsa:4096 -keyout /etc/apache2/ssl/apache.key -out /etc/apache2/ssl/apache.crt -days 365 -nodes -subj "/C=BR/ST=DF/L=Brasilia/O=Internet Widgits Pty Ltd/OU=. /CN=example.com/emailAddress=example@example.com"
+
+#RUN rm /etc/apache2/sites-available/default-ssl.conf
+
+COPY default-ssl.conf /etc/apache2/sites-available/
+
+RUN a2ensite default-ssl.conf
+
+# Copy files
+RUN rm /etc/apache2/apache2.conf
+
+COPY apache2.conf /etc/apache2/
+
+#Configurações adicionais para o Apache 2
+RUN rm /etc/ssl/openssl.cnf
+
+COPY openssl.cnf /etc/ssl/openssl.cnf
+
+RUN rm /etc/apache2/sites-available/000-default.conf
+
+COPY 000-default.conf /etc/apache2/sites-available/
+
+RUN rm /etc/php/8.2/apache2/php.ini
+
+COPY php.ini /etc/php/8.2/apache2/
+
+RUN a2enmod rewrite
+
+# Exposição de portas do container para o Apache 2
+EXPOSE 80
+EXPOSE 443
+
+# Launch Apache
+CMD ["/usr/sbin/apache2ctl", "-DFOREGROUND"]
