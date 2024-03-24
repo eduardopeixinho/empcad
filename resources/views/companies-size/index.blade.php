@@ -3,7 +3,7 @@
 @section('content')
     <div class="card card-secondary">
         <div class="card-header">
-            <h3 class="card-title">Cadastro de Papéis</h3>
+            <h3 class="card-title">Cadastro de Porte da Empresa</h3>
         </div>
     </div>
     <main class="col-md-9 ms-sm-auto col-lg-12 px-md-4">
