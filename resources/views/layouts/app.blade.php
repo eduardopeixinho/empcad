@@ -36,7 +36,8 @@
                                     onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                     Sign out
                                 </a>
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                <form id="logout-form" action="{{ route('google.logout') }}" method="POST"
+                                    class="d-none">
                                     @csrf
                                 </form>
                             </li>
@@ -51,6 +52,8 @@
             <!-- Content Wrapper. Contains page content -->
 
             <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.js"></script>
+            <script src="https://eduardopeixinho.com/empcad/public/build/assets/app-Cd5NRTe2.js"></script>
+            <link href="https://eduardopeixinho.com/empcad/public/build/assets/app-Vt9JmINX.css" rel="stylesheet">
 
             <div class="content-wrapper">
 
