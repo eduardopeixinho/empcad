@@ -60,16 +60,21 @@ class SocialiteLogin
         }
 */
 
-
         Auth::login($user);
-        
-        
+            
       //  event(new LoginHistory($user));
 
         return redirect()->route('home');        
 
-
-
-
     }
+    public function googleLogout(Request $request)
+    {
+        Auth::guard()->logout();
+        session()->flush();
+        
+        Socialite::driver('google')->stateless()->logout();
+        
+        // Redireciona para a página de login
+        return redirect('/login');    
+    }     
 }
